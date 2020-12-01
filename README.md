@@ -1,5 +1,4 @@
-# wellp
-
+# wellp is a simple jpg/png to webp converter
 ### Flags ⛳️
  >-convex
         
