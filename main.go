@@ -14,16 +14,18 @@ import (
 var (
 	dir      = flag.String("dir", "watch", "folder to watch for incoming images")
 	existing = flag.Bool("convex", false, "convert already existing image in dir")
+	quality  = flag.Uint("quality", 80, "quality of webp conversion between 1 and 100")
 )
 
 var ext = []string{".jpg", ".png"}
 
 func main() {
 	flag.Parse()
+	log.Println(*quality)
 	if *existing {
 		imgs, _ := getImages(*dir)
 		for _, img := range imgs {
-			err := webp(img)
+			err := webp(img, *quality)
 			if err != nil {
 				log.Printf("could not convert %s to webp", img)
 			}
@@ -45,14 +47,7 @@ func main() {
 				}
 				if event.Op == fsnotify.Create && isValidFile(event.Name) {
 					log.Println("processing:", event.Name)
-					err := webpbin.NewCWebP().
-						Quality(80).
-						InputFile(event.Name).
-						OutputFile(getNewName(event.Name)).
-						Run()
-					if err != nil {
-						log.Fatal(err.Error())
-					}
+					webp(event.Name, *quality)
 				}
 				if event.Op&fsnotify.Create == fsnotify.Create {
 					log.Println("new file created:", event.Name)
@@ -92,9 +87,10 @@ func getNewName(name string) string {
 	return name
 }
 
-func webp(path string) error {
+func webp(path string, quality uint) error {
+	log.Printf("converting %s with quality %d", path, quality)
 	err := webpbin.NewCWebP().
-		Quality(80).
+		Quality(quality).
 		InputFile(path).
 		OutputFile(getNewName(path)).
 		Run()
