@@ -7,6 +7,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/common-nighthawk/go-figure"
 	"github.com/fsnotify/fsnotify"
 	"github.com/nickalie/go-webpbin"
 )
@@ -21,15 +22,10 @@ var ext = []string{".jpg", ".png"}
 
 func main() {
 	flag.Parse()
-	log.Println(*quality)
+	figure.NewColorFigure("wellp", "isometric1", "blue", true).Print()
+
 	if *existing {
-		imgs, _ := getImages(*dir)
-		for _, img := range imgs {
-			err := webp(img, *quality)
-			if err != nil {
-				log.Printf("could not convert %s to webp", img)
-			}
-		}
+		convExisting(*dir, *quality)
 	}
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -68,7 +64,15 @@ func main() {
 	<-done
 
 }
-
+func convExisting(dir string, quality uint) {
+	imgs, _ := getImages(dir)
+	for _, img := range imgs {
+		err := webp(img, quality)
+		if err != nil {
+			log.Printf("could not convert %s to webp", img)
+		}
+	}
+}
 func isValidFile(name string) bool {
 	for _, e := range ext {
 		if strings.Contains(name, e) {

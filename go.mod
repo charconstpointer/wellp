@@ -3,6 +3,7 @@ module github.com/charconstpointer/wellp
 go 1.13
 
 require (
+	github.com/common-nighthawk/go-figure v0.0.0-20200609044655-c4b36f998cf2 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.11.2 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
